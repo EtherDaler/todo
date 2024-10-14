@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+</head>
+<body>
+    <h1>Список задач</h1>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul>
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    <a href="{{ url_for('main.manage_todo') }}">Добавить новую задачу</a>
+    <ul>
+        {% for todo in todos %}
+            <li>
+                <strong>{{ todo.title }}</strong> - {{ todo.description }}
+                <form action="{{ url_for('main.delete_todo', todo_id=todo.id) }}" method="POST" style="display:inline;">
+                    <button type="submit">Удалить</button>
+                </form>
+                <a href="{{ url_for('main.manage_todo', todo_id=todo.id) }}">Редактировать</a>
+            </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

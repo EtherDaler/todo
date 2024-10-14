@@ -1,0 +1,57 @@
+version: '3.8'
+services:
+  web:
+    build: .
+    restart: always
+    volumes:
+      - .:/app
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+    environment:
+      - FLASK_APP=app
+      - SECRET_KEY=wl7iUtpDAiKo8OrJBbrGArp8bbsfP5Qj
+      - JWT_SECRET_KEY=eyJhbGciOiJIUzI1NiJ9.eyJSb2xlIjoiQWRtaW4iLCJJc3N1ZXIiOiJJc3N1ZXIiLCJVc2VybmFtZSI6IkphdmFJblVzZSIsImV4cCI6MTcyODg3OTg1MCwiaWF0IjoxNzI4ODc5ODUwfQ.GduLPSumdCt7Ws6sY81W4h4fMVt_TXeLV7I0Exe-a-k
+      - FLASK_ENV=development
+      - DATABASE_URL=postgresql://postgres:password@db:5432/todo_db
+    networks:
+      - backend-network
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: todo_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - backend-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    depends_on:
+      - db
+    ports:
+      - "5555:80"
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
+      PGADMIN_DEFAULT_PASSWORD: admin
+    restart: unless-stopped
+    networks:
+      - backend-network
+
+
+volumes:
+  db_data:
+  pgadmin:
+
+networks:
+  backend-network:
+    external: false
+    attachable: true
